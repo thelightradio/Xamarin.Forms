@@ -69,7 +69,7 @@ namespace Xamarin.Forms.Platform.iOS
 
 		public NSIndexPath GetIndexForItem(object item)
 		{
-			for (int n = 0; n < Count; n++)
+			for (int n = 0; n < ItemsCount(); n++)
 			{
 				if (this[n] == item)
 				{
