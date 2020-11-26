@@ -690,9 +690,11 @@ namespace Xamarin.Forms.Platform.Android
 							child.Layout(contentX + _contentView.Width - (swipeItemWidth + previousWidth), contentY, (_contentView.Width - previousWidth) + contentX, swipeItemHeight + contentY);
 							break;
 						case SwipeDirection.Right:
-						case SwipeDirection.Up:
 						case SwipeDirection.Down:
 							child.Layout(contentX + previousWidth, contentY, ((i + 1) * swipeItemWidth) + contentX, swipeItemHeight + contentY);
+							break;
+						case SwipeDirection.Up:
+							child.Layout(contentX + previousWidth, _contentView.Height - (contentY + swipeItemHeight), ((i + 1) * swipeItemWidth) + contentX, swipeItemHeight + contentY + _contentView.Height);
 							break;
 					}
 
@@ -1161,27 +1163,47 @@ namespace Xamarin.Forms.Platform.Android
 					swipeThreshold = GetSwipeItemHeight();
 			}
 			else
-			{
-				if (isHorizontal)
-					swipeThreshold = CalculateSwipeThreshold();
-				else
-				{
-					var contentHeight = (float)_context.FromPixels(_contentView.Height);
-					swipeThreshold = (SwipeThreshold > contentHeight) ? contentHeight : SwipeThreshold;
-				}
-			}
-
+				swipeThreshold = CalculateSwipeThreshold();
+			
 			return ValidateSwipeThreshold(swipeThreshold);
 		}
 
 		float CalculateSwipeThreshold()
 		{
-			if (_contentView != null)
-			{
-				var contentWidth = (float)_context.FromPixels(_contentView.Width);
-				var swipeThreshold = contentWidth * 0.8f;
+			var swipeItems = GetSwipeItemsByDirection();
 
-				return swipeThreshold;
+			float swipeItemsHeight = 0;
+			float swipeItemsWidth = 0;
+			bool useSwipeItemsSize = false;
+
+			foreach (var swipeItem in swipeItems)
+			{
+				if (swipeItem is SwipeItemView)
+					useSwipeItemsSize = true;
+
+				if (swipeItem.IsVisible)
+				{
+					var swipeItemSize = GetSwipeItemSize(swipeItem);
+					swipeItemsHeight += (float)swipeItemSize.Height;
+					swipeItemsWidth += (float)swipeItemSize.Width;
+				}
+			}
+
+			if (useSwipeItemsSize)
+			{
+				var isHorizontalSwipe = IsHorizontalSwipe();
+
+				return isHorizontalSwipe ? swipeItemsWidth : swipeItemsHeight;
+			}
+			else
+			{
+				if (_contentView != null)
+				{
+					var contentWidth = (float)_context.FromPixels(_contentView.Width);
+					var contentWidthSwipeThreshold = contentWidth * 0.8f;
+
+					return contentWidthSwipeThreshold;
+				}
 			}
 
 			return SwipeThreshold;
@@ -1191,6 +1213,7 @@ namespace Xamarin.Forms.Platform.Android
 		{
 			var contentHeight = (float)_context.FromPixels(_contentView.Height);
 			var contentWidth = (float)_context.FromPixels(_contentView.Width);
+
 			bool isHorizontal = IsHorizontalSwipe();
 
 			if (isHorizontal)
