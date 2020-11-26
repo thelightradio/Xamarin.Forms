@@ -203,26 +203,28 @@ namespace Xamarin.Forms.Platform.iOS
 			if (e.Action == NotifyCollectionChangedAction.Remove)
 				_positionAfterUpdate = GetPositionWhenRemovingItems(e.OldStartingIndex, carouselPosition, currentItemPosition, count);
 
-			if (e.Action == NotifyCollectionChangedAction.Reset)
-				_positionAfterUpdate = GetPositionWhenResetItems();
-
 			if (e.Action == NotifyCollectionChangedAction.Add)
 				_positionAfterUpdate = GetPositionWhenAddingItems(carouselPosition, currentItemPosition);
 		}
 
 		void CollectionViewUpdated(object sender, NotifyCollectionChangedEventArgs e)
 		{
-			if (e.Action == NotifyCollectionChangedAction.Reset || _positionAfterUpdate == -1)
+			if (e.Action == NotifyCollectionChangedAction.Reset && ItemsSource.ItemCount == 0)
 			{
+				UpdatePositionAndCurrentItemOnReset();
 				return;
 			}
 
 			_gotoPosition = -1;
 
-			var targetPosition = _positionAfterUpdate;
+			var targetPosition = _positionAfterUpdate == -1 ? Carousel.Position : _positionAfterUpdate;
 			_positionAfterUpdate = -1;
 
-			Carousel.ScrollTo(targetPosition, position: Xamarin.Forms.ScrollToPosition.Center, animate: false);
+			if (ItemsSource.ItemCount > 0)
+				ScrollToPosition(targetPosition, Carousel.Position, false);
+
+			SetPosition(targetPosition);
+			SetCurrentItem(targetPosition);
 		}
 
 		int GetPositionWhenAddingItems(int carouselPosition, int currentItemPosition)
@@ -231,11 +233,12 @@ namespace Xamarin.Forms.Platform.iOS
 			return currentItemPosition != -1 ? currentItemPosition : carouselPosition;
 		}
 
-		int GetPositionWhenResetItems()
+		void UpdatePositionAndCurrentItemOnReset()
 		{
-			//If we are reseting the collection Position should go to 0
+			//If we are reseting the collection Position should be 0 and CurrentItem null
+			Carousel.SetValueFromRenderer(CarouselView.PositionProperty, 0);
 			Carousel.SetValueFromRenderer(CarouselView.CurrentItemProperty, null);
-			return 0;
+
 		}
 
 		int GetPositionWhenRemovingItems(int oldStartingIndex, int carouselPosition, int currentItemPosition, int count)
