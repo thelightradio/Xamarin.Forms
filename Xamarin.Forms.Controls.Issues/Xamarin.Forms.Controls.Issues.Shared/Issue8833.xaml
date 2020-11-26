@@ -67,7 +67,8 @@
                                 </SwipeItemView>
                             </SwipeItems>
                         </SwipeView.BottomItems>
-                        <StackLayout>
+                        <StackLayout
+                            BackgroundColor="LightGray">
                             <Frame
                                 HasShadow="True"
                                 BorderColor="DarkGray"

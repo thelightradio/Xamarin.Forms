@@ -56,6 +56,7 @@
                     </SwipeItems>
                 </SwipeView.BottomItems>
                 <Grid
+                    Opacity="0.75"
                     BackgroundColor="White">
                     <Label
                         HorizontalOptions="Center"
