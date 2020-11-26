@@ -24,9 +24,18 @@
                         <SwipeView.RightItems>
                             <SwipeItems
                                 Mode="Execute">
-                                <SwipeItem
-                                    Text="Delete"
-                                    BackgroundColor="#2e2140" />
+                                <SwipeItemView
+                                    WidthRequest="100"
+                                    BackgroundColor="#2e2140">
+                                    <Grid>
+                                        <Label
+                                            HorizontalOptions="End"
+                                            VerticalOptions="Center"
+                                            TextColor="White"
+                                            Text="Delete"
+                                            Margin="24, 0"/>
+                                    </Grid>
+                                </SwipeItemView>
                             </SwipeItems>
                         </SwipeView.RightItems>
                         <StackLayout
@@ -66,9 +75,18 @@
                         <SwipeView.RightItems>
                             <SwipeItems
                                 Mode="Execute">
-                                <SwipeItem
-                                    Text="Delete"
-                                    BackgroundColor="#2e2140" />
+                                <SwipeItemView
+                                    WidthRequest="100"
+                                    BackgroundColor="#2e2140">
+                                    <Grid>
+                                        <Label
+                                            HorizontalOptions="End"
+                                            VerticalOptions="Center"
+                                            TextColor="White"
+                                            Text="Delete"
+                                            Margin="24, 0"/>
+                                    </Grid>
+                                </SwipeItemView>
                             </SwipeItems>
                         </SwipeView.RightItems>
                         <StackLayout
