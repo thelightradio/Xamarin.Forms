@@ -32,8 +32,6 @@ namespace Xamarin.Forms.Platform.Android
 		AView _contentView;
 		LinearLayoutCompat _actionView;
 		SwipeTransitionMode _swipeTransitionMode;
-		float _downX;
-		float _downY;
 		float _density;
 		bool _isTouchDown;
 		bool _isSwiping;
@@ -277,8 +275,6 @@ namespace Xamarin.Forms.Platform.Android
 		{
 			if (e.Action == MotionEventActions.Down)
 			{
-				_downX = e.RawX;
-				_downY = e.RawY;
 				_initialPoint = new APointF(e.GetX() / _density, e.GetY() / _density);
 			}
 
@@ -313,12 +309,19 @@ namespace Xamarin.Forms.Platform.Android
 
 		void UpdateContent()
 		{
+			if (_contentView != null)
+			{
+				_contentView.RemoveFromParent();
+				_contentView.Dispose();
+				_contentView = null;
+			}
+
 			if (Element.Content == null)
 				_contentView = CreateEmptyContent();
 			else
 				_contentView = CreateContent();
 
-			AddView(_contentView, new LayoutParams(LayoutParams.MatchParent, LayoutParams.MatchParent));
+			AddView(_contentView);
 		}
 
 		AView CreateEmptyContent()
@@ -331,7 +334,7 @@ namespace Xamarin.Forms.Platform.Android
 
 		AView CreateContent()
 		{
-			var renderer = Platform.CreateRenderer(Element.Content, _context);
+			var renderer = Element.Content.GetRenderer() ?? Platform.CreateRendererWithContext(Element.Content, Context);
 			Platform.SetRenderer(Element.Content, renderer);
 
 			return renderer?.View;
@@ -368,11 +371,6 @@ namespace Xamarin.Forms.Platform.Android
 			return swipeItems;
 		}
 
-		bool HasSwipeItems()
-		{
-			return Element != null && (IsValidSwipeItems(Element.LeftItems) || IsValidSwipeItems(Element.RightItems) || IsValidSwipeItems(Element.TopItems) || IsValidSwipeItems(Element.BottomItems));
-		}
-
 		bool IsHorizontalSwipe()
 		{
 			return _swipeDirection == SwipeDirection.Left || _swipeDirection == SwipeDirection.Right;
@@ -391,9 +389,6 @@ namespace Xamarin.Forms.Platform.Android
 			switch (e.Action)
 			{
 				case MotionEventActions.Down:
-					_downX = e.RawX;
-					_downY = e.RawY;
-
 					handled = HandleTouchInteractions(GestureStatus.Started, point);
 
 					if (handled == true)
@@ -682,18 +677,22 @@ namespace Xamarin.Forms.Platform.Android
 				{
 					var item = items[i];
 					var swipeItemSize = GetSwipeItemSize(item);
+
 					var swipeItemHeight = (int)_context.ToPixels(swipeItemSize.Height);
 					var swipeItemWidth = (int)_context.ToPixels(swipeItemSize.Width);
+
+					int contentX = (int)_contentView.GetX();
+					int contentY = (int)_contentView.GetY();
 
 					switch (_swipeDirection)
 					{
 						case SwipeDirection.Left:
-							child.Layout(_contentView.Width - (swipeItemWidth + previousWidth), 0, _contentView.Width - previousWidth, swipeItemHeight);
+							child.Layout(contentX + _contentView.Width - (swipeItemWidth + previousWidth), contentY, (_contentView.Width - previousWidth) + contentX, swipeItemHeight + contentY);
 							break;
 						case SwipeDirection.Right:
 						case SwipeDirection.Up:
 						case SwipeDirection.Down:
-							child.Layout(previousWidth, 0, (i + 1) * swipeItemWidth, swipeItemHeight);
+							child.Layout(contentX + previousWidth, contentY, ((i + 1) * swipeItemWidth) + contentX, swipeItemHeight + contentY);
 							break;
 					}
 
