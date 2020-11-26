@@ -28,7 +28,10 @@
                         x:Name="LeftSwipeItems">
                         <SwipeItem
                             BackgroundColor="Red"
-                            Text="Left Item" />
+                            Text="Left Item 1" />
+                        <SwipeItem
+                            BackgroundColor="IndianRed"
+                            Text="Left Item 2" />
                     </SwipeItems>
                 </SwipeView.LeftItems>
                 <SwipeView.TopItems>
@@ -36,7 +39,10 @@
                         x:Name="TopSwipeItems">
                         <SwipeItem
                             BackgroundColor="Blue"
-                            Text="Top Item" />
+                            Text="Top Item 1" />
+                        <SwipeItem
+                            BackgroundColor="DarkBlue"
+                            Text="Right Item 2" />
                     </SwipeItems>
                 </SwipeView.TopItems>
                 <SwipeView.RightItems>
@@ -44,15 +50,21 @@
                         x:Name="RightSwipeItems">
                         <SwipeItem
                             BackgroundColor="Orange"
-                            Text="Right Item" />
+                            Text="Right Item 1" />
+                        <SwipeItem
+                            BackgroundColor="DarkOrange"
+                            Text="Right Item 2" />
                     </SwipeItems>
                 </SwipeView.RightItems>
                 <SwipeView.BottomItems>
                     <SwipeItems
                         x:Name="BottomSwipeItems">
                         <SwipeItem
-                            BackgroundColor="Green"
-                            Text="Bottom Item" />
+                            BackgroundColor="DarkGreen"
+                            Text="Bottom Item 1" />
+                        <SwipeItem
+                            BackgroundColor="LawnGreen"
+                            Text="Bottom Item 2" />
                     </SwipeItems>
                 </SwipeView.BottomItems>
                 <Grid

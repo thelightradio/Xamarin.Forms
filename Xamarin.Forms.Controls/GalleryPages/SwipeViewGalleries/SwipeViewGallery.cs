@@ -28,6 +28,7 @@ namespace Xamarin.Forms.Controls.GalleryPages.SwipeViewGalleries
 						GalleryBuilder.NavButton("SwipeView BindingContext Gallery", () => new SwipeViewBindingContextGallery(), Navigation),
 						GalleryBuilder.NavButton("SwipeItem Icon Gallery", () => new SwipeItemIconGallery(), Navigation),
 						GalleryBuilder.NavButton("SwipeItem Position Gallery", () => new PositionGallery(), Navigation),
+						GalleryBuilder.NavButton("SwipeView Margin Gallery", () => new SwipeViewMarginGallery(), Navigation),
 						GalleryBuilder.NavButton("SwipeItem Size Gallery", () => new SwipeItemSizeGallery(), Navigation),
 						GalleryBuilder.NavButton("SwipeItem IsEnabled Gallery", () => new SwipeItemIsEnabledGallery(), Navigation),
 						GalleryBuilder.NavButton("SwipeItemView IsEnabled Gallery", () => new SwipeItemViewIsEnabledGallery(), Navigation),
