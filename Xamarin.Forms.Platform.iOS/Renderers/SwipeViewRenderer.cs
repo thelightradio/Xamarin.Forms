@@ -354,7 +354,7 @@ namespace Xamarin.Forms.Platform.iOS
 
 		void HandlePan(UIPanGestureRecognizer panGestureRecognizer)
 		{
-			if (panGestureRecognizer != null)
+			if (_isSwipeEnabled && panGestureRecognizer != null)
 			{
 				CGPoint point = panGestureRecognizer.LocationInView(this);
 				var navigationController = GetUINavigationController(GetViewController());
@@ -399,11 +399,6 @@ namespace Xamarin.Forms.Platform.iOS
 		void UpdateIsSwipeEnabled()
 		{
 			_isSwipeEnabled = Element.IsEnabled;
-		}
-
-		bool HasSwipeItems()
-		{
-			return Element != null && (IsValidSwipeItems(Element.LeftItems) || IsValidSwipeItems(Element.RightItems) || IsValidSwipeItems(Element.TopItems) || IsValidSwipeItems(Element.BottomItems));
 		}
 
 		bool IsHorizontalSwipe()
@@ -492,6 +487,7 @@ namespace Xamarin.Forms.Platform.iOS
 				{
 					var item = items[i];
 					var swipeItemSize = GetSwipeItemSize(item);
+
 					float swipeItemHeight = (float)swipeItemSize.Height;
 					float swipeItemWidth = (float)swipeItemSize.Width;
 
@@ -501,9 +497,11 @@ namespace Xamarin.Forms.Platform.iOS
 							child.Frame = new CGRect(_contentView.Frame.Width - (swipeItemWidth + previousWidth), _originalBounds.Y, i + 1 * swipeItemWidth, swipeItemHeight);
 							break;
 						case SwipeDirection.Right:
-						case SwipeDirection.Up:
 						case SwipeDirection.Down:
 							child.Frame = new CGRect(previousWidth, _originalBounds.Y, i + 1 * swipeItemWidth, swipeItemHeight);
+							break;
+						case SwipeDirection.Up:
+							child.Frame = new CGRect(previousWidth, _contentView.Frame.Height - swipeItemHeight, (i + 1) * swipeItemWidth, swipeItemHeight + _contentView.Frame.Height);
 							break;
 					}
 
@@ -712,7 +710,7 @@ namespace Xamarin.Forms.Platform.iOS
 					break;
 				case GestureStatus.Canceled:
 				case GestureStatus.Completed:
-					ProcessTouchUp(point);
+					ProcessTouchUp();
 					break;
 			}
 
@@ -766,7 +764,7 @@ namespace Xamarin.Forms.Platform.iOS
 			RaiseSwipeChanging();
 		}
 
-		void ProcessTouchUp(CGPoint point)
+		void ProcessTouchUp()
 		{
 			_isTouchDown = false;
 
@@ -800,19 +798,6 @@ namespace Xamarin.Forms.Platform.iOS
 
 			if (parent != null)
 				parent.ScrollEnabled = _isScrollEnabled;
-		}
-
-		bool CanProcessTouchSwipeItems(CGPoint point)
-		{
-			// We only invoke the SwipeItem command if we tap on the SwipeItems area
-			// and the SwipeView is fully open.
-			if (TouchInsideContent(point))
-				return false;
-
-			if (_swipeOffset == _swipeThreshold)
-				return true;
-
-			return false;
 		}
 
 		bool TouchInsideContent(CGPoint point)
@@ -1190,26 +1175,47 @@ namespace Xamarin.Forms.Platform.iOS
 					swipeThreshold = GetSwipeItemHeight();
 			}
 			else
-			{
-				if (isHorizontal)
-					swipeThreshold = CalculateSwipeThreshold();
-				else
-				{
-					var contentHeight = _contentView.Frame.Height;
-					swipeThreshold = (SwipeThreshold > contentHeight) ? contentHeight : SwipeThreshold;
-				}
-			}
+				swipeThreshold = CalculateSwipeThreshold();
 
 			return ValidateSwipeThreshold(swipeThreshold);
 		}
 
 		double CalculateSwipeThreshold()
 		{
-			if (_contentView != null)
-			{
-				var swipeThreshold = _contentView.Frame.Width * 0.8;
+			var swipeItems = GetSwipeItemsByDirection();
 
-				return swipeThreshold;
+			float swipeItemsHeight = 0;
+			float swipeItemsWidth = 0;
+			bool useSwipeItemsSize = false;
+
+			foreach (var swipeItem in swipeItems)
+			{
+				if (swipeItem is SwipeItemView)
+					useSwipeItemsSize = true;
+
+				if (swipeItem.IsVisible)
+				{
+					var swipeItemSize = GetSwipeItemSize(swipeItem);
+					swipeItemsHeight += (float)swipeItemSize.Height;
+					swipeItemsWidth += (float)swipeItemSize.Width;
+				}
+			}
+
+			if (useSwipeItemsSize)
+			{
+				var isHorizontalSwipe = IsHorizontalSwipe();
+
+				return isHorizontalSwipe ? swipeItemsWidth : swipeItemsHeight;
+			}
+			else
+			{
+				if (_contentView != null)
+				{
+					var contentWidth = _contentView.Frame.Width;
+					var contentWidthSwipeThreshold = contentWidth * 0.8f;
+
+					return contentWidthSwipeThreshold;
+				}
 			}
 
 			return SwipeThreshold;
