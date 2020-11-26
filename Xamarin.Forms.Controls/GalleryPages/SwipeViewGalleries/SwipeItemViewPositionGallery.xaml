@@ -28,6 +28,7 @@
                         x:Name="LeftSwipeItems">
                         <SwipeItemView>
                             <Grid
+                                WidthRequest="100"
                                 BackgroundColor="Red">
                                 <Label
                                     HorizontalOptions="Center"
@@ -42,6 +43,7 @@
                         x:Name="TopSwipeItems">
                         <SwipeItemView>
                             <Grid
+                                HeightRequest="200"
                                 BackgroundColor="Blue">
                                 <Label
                                     HorizontalOptions="Center"
@@ -56,6 +58,7 @@
                         x:Name="RightSwipeItems">
                         <SwipeItemView>
                             <Grid
+                                WidthRequest="150"
                                 BackgroundColor="Orange">
                                 <Label
                                     HorizontalOptions="Center"
@@ -70,6 +73,7 @@
                         x:Name="BottomSwipeItems">
                         <SwipeItemView>
                             <Grid
+                                HeightRequest="100"
                                 BackgroundColor="Green">
                                 <Label
                                     HorizontalOptions="Center"
