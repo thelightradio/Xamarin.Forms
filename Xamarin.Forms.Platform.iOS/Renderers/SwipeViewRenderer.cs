@@ -1276,10 +1276,18 @@ namespace Xamarin.Forms.Platform.iOS
 					return new Size(contentWidth / items.Count, (threshold > 0 && threshold < swipeItemHeight) ? threshold : swipeItemHeight);
 				}
 
-				if (swipeItem is SwipeItemView horizontalSwipeItemView)
+				if (swipeItem is SwipeItemView verticalSwipeItemView)
 				{
-					var swipeItemViewSizeRequest = horizontalSwipeItemView.Measure(double.PositiveInfinity, double.PositiveInfinity, MeasureFlags.IncludeMargins);
-					return new Size(contentWidth / items.Count, swipeItemViewSizeRequest.Request.Height > 0 ? (float)swipeItemViewSizeRequest.Request.Height : contentHeight);
+					var swipeItemViewSizeRequest = verticalSwipeItemView.Measure(double.PositiveInfinity, double.PositiveInfinity, MeasureFlags.IncludeMargins);
+
+					double swipeItemHeight;
+
+					if (swipeItemViewSizeRequest.Request.Width > 0)
+						swipeItemHeight = threshold > swipeItemViewSizeRequest.Request.Height ? threshold : (float)swipeItemViewSizeRequest.Request.Height;
+					else
+						swipeItemHeight = threshold > contentHeight ? threshold : contentHeight;
+
+					return new Size(contentWidth / items.Count, swipeItemHeight);
 				}
 			}
 
