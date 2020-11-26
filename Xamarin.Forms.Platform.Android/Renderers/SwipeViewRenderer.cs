@@ -102,29 +102,7 @@ namespace Xamarin.Forms.Platform.Android
 				UpdateSwipeTransitionMode();
 		}
 
-		protected override void OnLayout(bool changed, int l, int t, int r, int b)
-		{
-			base.OnLayout(changed, l, t, r, b);
-
-			var width = r - l;
-			var height = b - t;
-
-			var pixelWidth = _context.FromPixels(width);
-			var pixelHeight = _context.FromPixels(height);
-
-			if (changed)
-			{
-				if (Element.Content != null)
-					Element.Content.Layout(new Rectangle(0, 0, pixelWidth, pixelHeight));
-
-				_contentView?.Layout(0, 0, width, height);
-			}
-		}
-
-		protected override Size MinimumSize()
-		{
-			return new Size(40, 40);
-		}
+		protected override Size MinimumSize() => new Size(40, 40);
 
 		protected override void UpdateBackgroundColor()
 		{
@@ -687,14 +665,16 @@ namespace Xamarin.Forms.Platform.Android
 					switch (_swipeDirection)
 					{
 						case SwipeDirection.Left:
-							child.Layout(contentX + _contentView.Width - (swipeItemWidth + previousWidth), contentY, (_contentView.Width - previousWidth) + contentX, swipeItemHeight + contentY);
+							child.Layout(contentX + _contentView.Width - (swipeItemWidth + previousWidth), contentY, _contentView.Width - previousWidth + contentX, swipeItemHeight + contentY);
 							break;
 						case SwipeDirection.Right:
+							child.Layout(contentX + previousWidth, contentY, ((i + 1) * swipeItemWidth) + contentX, swipeItemHeight + contentY);
+							break;
 						case SwipeDirection.Down:
 							child.Layout(contentX + previousWidth, contentY, ((i + 1) * swipeItemWidth) + contentX, swipeItemHeight + contentY);
 							break;
 						case SwipeDirection.Up:
-							child.Layout(contentX + previousWidth, _contentView.Height - (contentY + swipeItemHeight), ((i + 1) * swipeItemWidth) + contentX, swipeItemHeight + contentY + _contentView.Height);
+							child.Layout(contentX + previousWidth, contentY + _contentView.Height - swipeItemHeight, ((i + 1) * swipeItemWidth) + contentX, _contentView.Height + contentY);
 							break;
 					}
 
