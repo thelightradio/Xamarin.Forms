@@ -1973,7 +1973,9 @@
     <EmbeddedResource Include="$(MSBuildThisFileDirectory)Issue11081.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
-    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Issue12614.xaml">
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Issue12614.xaml">  
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
     <EmbeddedResource Include="$(MSBuildThisFileDirectory)Issue12374.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
