@@ -192,6 +192,12 @@ namespace Xamarin.Forms.Platform.iOS
 		{
 			if (e.Action == NotifyCollectionChangedAction.Reset)
 			{
+				//this can be called if we are adding/removing
+				//if we really are reseting the collection
+				//we should update Position and CurrentItem
+				if(ItemsSource.ItemCount == 0)
+					UpdatePositionAndCurrentItemOnReset();
+
 				return;
 			}
 
@@ -209,11 +215,6 @@ namespace Xamarin.Forms.Platform.iOS
 
 		void CollectionViewUpdated(object sender, NotifyCollectionChangedEventArgs e)
 		{
-			if (e.Action == NotifyCollectionChangedAction.Reset && ItemsSource.ItemCount == 0)
-			{
-				UpdatePositionAndCurrentItemOnReset();
-				return;
-			}
 
 			_gotoPosition = -1;
 
@@ -238,7 +239,6 @@ namespace Xamarin.Forms.Platform.iOS
 			//If we are reseting the collection Position should be 0 and CurrentItem null
 			Carousel.SetValueFromRenderer(CarouselView.PositionProperty, 0);
 			Carousel.SetValueFromRenderer(CarouselView.CurrentItemProperty, null);
-
 		}
 
 		int GetPositionWhenRemovingItems(int oldStartingIndex, int carouselPosition, int currentItemPosition, int count)
@@ -304,7 +304,7 @@ namespace Xamarin.Forms.Platform.iOS
 		}
 
 		void ScrollToPosition(int goToPosition, int carouselPosition, bool animate, bool forceScroll = false)
-		{	
+		{
 			if (Carousel.Loop)
 				carouselPosition = _carouselViewLoopManager?.GetCorrectPositionForCenterItem(CollectionView) ?? -1;
 
@@ -394,8 +394,8 @@ namespace Xamarin.Forms.Platform.iOS
 				{
 					SetCurrentItem(position);
 				}
-
-				Carousel.ScrollTo(position, -1, Xamarin.Forms.ScrollToPosition.Center, false);
+				if (position != -1)
+					Carousel.ScrollTo(position, -1, Xamarin.Forms.ScrollToPosition.Center, false);
 			}
 
 			UpdateVisualStates();
